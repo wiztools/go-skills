@@ -39,7 +39,7 @@ func DefaultConfig() Config {
 }
 
 // Catalog holds a loaded in-memory index of skills discovered from one or more
-// root directories.
+// parent directories.
 type Catalog struct {
 	config Config
 	roots  []string
@@ -47,14 +47,14 @@ type Catalog struct {
 	byName map[string]*Skill
 }
 
-// NewCatalog discovers and loads every skill found under the provided skill
-// root directories.
+// NewCatalog discovers and loads every skill found under the provided parent
+// directories.
 func NewCatalog(skillDirs ...string) (*Catalog, error) {
 	return NewCatalogWithConfig(DefaultConfig(), skillDirs...)
 }
 
 // NewCatalogWithConfig creates a catalog with the provided configuration and
-// eagerly loads the supplied roots.
+// eagerly loads the supplied parent directories.
 func NewCatalogWithConfig(config Config, skillDirs ...string) (*Catalog, error) {
 	c := New(config)
 	if err := c.Load(skillDirs...); err != nil {
@@ -64,7 +64,7 @@ func NewCatalogWithConfig(config Config, skillDirs ...string) (*Catalog, error) 
 }
 
 // New creates an empty catalog with the provided configuration. Use Load to
-// discover skills from one or more roots.
+// discover skills from one or more parent directories.
 func New(config Config) *Catalog {
 	if !config.DuplicatePolicy.valid() {
 		config.DuplicatePolicy = DuplicateSkillError
@@ -81,8 +81,9 @@ func New(config Config) *Catalog {
 	}
 }
 
-// Load discovers and loads every skill found under the provided skill root
-// directories.
+// Load discovers and loads every skill found under the provided parent
+// directories. Each parent directory is walked recursively and every SKILL.md
+// found beneath it is treated as one skill.
 func (c *Catalog) Load(skillDirs ...string) error {
 	if len(skillDirs) == 0 {
 		return errors.New("at least one skills directory is required")
@@ -102,7 +103,7 @@ func (c *Catalog) Load(skillDirs ...string) error {
 	return nil
 }
 
-// Roots returns the normalized skill roots used to build the catalog.
+// Roots returns the normalized parent directories used to build the catalog.
 func (c *Catalog) Roots() []string {
 	return append([]string(nil), c.roots...)
 }

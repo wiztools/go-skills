@@ -6,7 +6,7 @@ This module loads AI skill directories into an in-memory catalog and renders tha
 
 Use it when you need to:
 
-- discover skills from one or more roots
+- discover skills from one or more parent directories
 - inspect parsed front matter
 - retrieve the markdown body of a specific skill
 - enumerate files contained in a skill
@@ -41,7 +41,7 @@ err := catalog.Load(dir1, dir2, dir3)
 
 Key behavior:
 
-- walks each provided root recursively
+- walks each provided parent directory recursively
 - treats every `SKILL.md` as one skill
 - loads all skills eagerly into memory
 - indexes skills by resolved name

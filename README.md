@@ -85,10 +85,10 @@ func main() {
 
 ### Catalog
 
-Create a catalog from one or more skill roots:
+Create a catalog from one or more parent directories:
 
 ```go
-catalog, err := skills.NewCatalog("/root/one", "/root/two")
+catalog, err := skills.NewCatalog("/parent/one", "/parent/two")
 ```
 
 Or create an instance with configuration and load roots later:
@@ -102,8 +102,10 @@ catalog := skills.New(skills.Config{
 	Debug:           true,
 })
 
-err := catalog.Load("/root/one", "/root/two")
+err := catalog.Load("/parent/one", "/parent/two")
 ```
+
+`Load()` expects parent directories, not individual skill directories. It walks each parent recursively and treats every discovered `SKILL.md` as one skill.
 
 Useful methods:
 

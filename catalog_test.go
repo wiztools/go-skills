@@ -74,6 +74,39 @@ Beta body.
 	}
 }
 
+func TestLoadTreatsInputAsParentDirectory(t *testing.T) {
+	parent := t.TempDir()
+
+	writeTestFile(t, filepath.Join(parent, "team-a", "alpha", "SKILL.md"), `---
+name: alpha
+description: Alpha skill
+---
+# Alpha
+`)
+	writeTestFile(t, filepath.Join(parent, "team-b", "beta", "SKILL.md"), `---
+name: beta
+description: Beta skill
+---
+# Beta
+`)
+
+	catalog := New(DefaultConfig())
+	if err := catalog.Load(parent); err != nil {
+		t.Fatalf("Load() error = %v", err)
+	}
+
+	if got, want := len(catalog.Skills()), 2; got != want {
+		t.Fatalf("len(Skills()) = %d, want %d", got, want)
+	}
+
+	if _, ok := catalog.Skill("alpha"); !ok {
+		t.Fatalf("alpha skill not found")
+	}
+	if _, ok := catalog.Skill("beta"); !ok {
+		t.Fatalf("beta skill not found")
+	}
+}
+
 func TestRenderers(t *testing.T) {
 	root := t.TempDir()
 	writeTestFile(t, filepath.Join(root, "alpha", "SKILL.md"), `---
