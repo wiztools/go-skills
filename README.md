@@ -114,6 +114,7 @@ Useful methods:
 - `Skill(name string) (*Skill, bool)`
 - `MustSkill(name string) (*Skill, error)`
 - `SkillMarkdown(name string) (string, error)`
+- `SkillMarkdownBundle(name string) (*MarkdownBundle, error)`
 - `Render(renderer Renderer) ([]byte, error)`
 - `Load(skillDirs ...string) error`
 
@@ -148,6 +149,29 @@ Useful methods:
 
 - `Markdown() string`
 - `Files() []string`
+- `MarkdownBundle() (*MarkdownBundle, error)`
+
+### Markdown bundles
+
+When a skill links to markdown references under the same root, you can build a
+single bundled context that includes the root `SKILL.md` plus linked markdown
+references in stable, deduplicated order.
+
+```go
+bundle, err := catalog.SkillMarkdownBundle("my-skill")
+if err != nil {
+	log.Fatal(err)
+}
+
+fmt.Println(bundle.RootFile)
+fmt.Println(bundle.Markdown)
+```
+
+`MarkdownBundle` includes:
+
+- `RootFile` — root-relative path to the starting `SKILL.md`
+- `Files` — included files with root-relative paths and raw contents
+- `Markdown` — one stitched markdown payload with explicit file boundaries
 
 ## Rendering
 
